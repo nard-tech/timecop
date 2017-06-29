@@ -119,6 +119,13 @@ class TestTimeStackItem < Minitest::Test
     assert_equal Rational( 1, 24), a_time_stack_item.send(:utc_offset_to_rational, 3600)
   end
 
+  def test_sec_normalized
+    assert_in_delta 0, Timecop::TimeStackItem.new(:freeze, 2008, 1, 1, 0, 0, 0).send(:sec_normalized), 0.001
+    assert_in_delta 0.1, Timecop::TimeStackItem.new(:freeze, 2008, 1, 1, 0, 0, 0.1).send(:sec_normalized), 0.001
+    assert_in_delta 0.2, Timecop::TimeStackItem.new(:freeze, 2008, 1, 1, 0, 0, 0.2).send(:sec_normalized), 0.001
+    assert_in_delta 1, Timecop::TimeStackItem.new(:freeze, 2008, 1, 1, 0, 0, 1).send(:sec_normalized), 0.001
+  end
+
   def test_datetime_in_presence_of_activesupport_timezone
     skip('requires ActiveSupport') unless Time.respond_to? :zone
     backed_up_zone, backed_up_tzvar = Time.zone, ENV['TZ']

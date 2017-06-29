@@ -78,15 +78,18 @@ class Timecop
     end
 
     def datetime(datetime_klass = DateTime)
-      if Float.method_defined?(:to_r)
-        fractions_of_a_second = time.to_f % 1
-        datetime_klass.new(year, month, day, hour, min, (fractions_of_a_second + sec), utc_offset_to_rational(utc_offset))
-      else
-        datetime_klass.new(year, month, day, hour, min, sec, utc_offset_to_rational(utc_offset))
-      end
+      datetime_klass.new(year, month, day, hour, min, sec_normalized, utc_offset_to_rational(utc_offset))
     end
 
     private
+
+    def sec_normalized
+      if Float.method_defined?(:to_r)
+        sec + time.to_f % 1
+      else
+        sec
+      end
+    end
 
     def utc_offset_to_rational(utc_offset)
       Rational(utc_offset, 24 * 60 * 60)

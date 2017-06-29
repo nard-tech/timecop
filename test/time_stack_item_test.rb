@@ -112,13 +112,6 @@ class TestTimeStackItem < Minitest::Test
     assert_equal s,   stack_item.sec
   end
 
-  def test_rational_to_utc_offset
-    assert_equal -14400, a_time_stack_item.send(:rational_to_utc_offset, Rational(-1, 6))
-    assert_equal -18000, a_time_stack_item.send(:rational_to_utc_offset, Rational(-5, 24))
-    assert_equal 0,      a_time_stack_item.send(:rational_to_utc_offset, Rational(0, 1))
-    assert_equal 3600,   a_time_stack_item.send(:rational_to_utc_offset, Rational(1, 24))
-  end
-
   def test_utc_offset_to_rational
     assert_equal Rational(-1, 6),  a_time_stack_item.send(:utc_offset_to_rational, -14400)
     assert_equal Rational(-5, 24), a_time_stack_item.send(:utc_offset_to_rational, -18000)

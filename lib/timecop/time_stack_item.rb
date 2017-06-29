@@ -4,8 +4,10 @@ class Timecop
   class TimeStackItem #:nodoc:
     attr_reader :mock_type
 
+    MOCK_TYPES = %i[freeze travel scale].freeze
+
     def initialize(mock_type, *args)
-      raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale].include?(mock_type)
+      raise "Unknown mock_type #{mock_type}" unless MOCK_TYPES.include?(mock_type)
       @travel_offset  = @scaling_factor = nil
       @scaling_factor = args.shift if mock_type == :scale
       @mock_type      = mock_type

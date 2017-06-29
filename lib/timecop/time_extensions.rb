@@ -8,6 +8,8 @@ class Time #:nodoc:
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.time(self)
     end
 
+    # @!group now
+
     alias_method :now_without_mock_time, :now
 
     def now_with_mock_time
@@ -16,6 +18,8 @@ class Time #:nodoc:
 
     alias_method :now, :now_with_mock_time
 
+    # @!group new
+
     alias_method :new_without_mock_time, :new
 
     def new_with_mock_time(*args)
@@ -23,6 +27,8 @@ class Time #:nodoc:
     end
 
     alias_method :new, :new_with_mock_time
+
+    # @!endgroup
   end
 end
 
@@ -32,6 +38,8 @@ class Date #:nodoc:
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.date(self)
     end
 
+    # @!group today
+
     alias_method :today_without_mock_date, :today
 
     def today_with_mock_date
@@ -39,6 +47,8 @@ class Date #:nodoc:
     end
 
     alias_method :today, :today_with_mock_date
+
+    # @!group strptime
 
     alias_method :strptime_without_mock_date, :strptime
 
@@ -52,6 +62,8 @@ class Date #:nodoc:
     end
 
     alias_method :strptime, :strptime_with_mock_date
+
+    # @!group parse
 
     alias_method :parse_without_mock_date, :parse
 
@@ -74,6 +86,8 @@ class Date #:nodoc:
 
     alias_method :parse, :parse_with_mock_date
 
+    # @!endgroup
+
     def mocked_time_stack_item
       Timecop.top_stack_item
     end
@@ -93,6 +107,8 @@ class DateTime #:nodoc:
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.datetime(self)
     end
 
+    # @!group now
+
     alias_method :now_without_mock_time, :now
 
     def now_with_mock_time
@@ -100,6 +116,8 @@ class DateTime #:nodoc:
     end
 
     alias_method :now, :now_with_mock_time
+
+    # @!group parse
 
     alias_method :parse_without_mock_date, :parse
 
@@ -121,6 +139,8 @@ class DateTime #:nodoc:
     end
 
     alias_method :parse, :parse_with_mock_date
+
+    # @!endgroup
 
     def mocked_time_stack_item
       Timecop.top_stack_item

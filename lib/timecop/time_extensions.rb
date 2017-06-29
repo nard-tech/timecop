@@ -53,6 +53,8 @@ class Date #:nodoc:
 
     alias_method :strptime, :strptime_with_mock_date
 
+    alias_method :parse_without_mock_date, :parse
+
     def parse_with_mock_date(*args)
       parsed_date = parse_without_mock_date(*args)
       return parsed_date unless mocked_time_stack_item
@@ -70,7 +72,6 @@ class Date #:nodoc:
       end
     end
 
-    alias_method :parse_without_mock_date, :parse
     alias_method :parse, :parse_with_mock_date
 
     def mocked_time_stack_item
@@ -92,13 +93,15 @@ class DateTime #:nodoc:
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.datetime(self)
     end
 
+    alias_method :now_without_mock_time, :now
+
     def now_with_mock_time
       mock_time || now_without_mock_time
     end
 
-    alias_method :now_without_mock_time, :now
-
     alias_method :now, :now_with_mock_time
+
+    alias_method :parse_without_mock_date, :parse
 
     def parse_with_mock_date(*args)
       parsed_date = parse_without_mock_date(*args)
@@ -117,7 +120,6 @@ class DateTime #:nodoc:
       end
     end
 
-    alias_method :parse_without_mock_date, :parse
     alias_method :parse, :parse_with_mock_date
 
     def mocked_time_stack_item

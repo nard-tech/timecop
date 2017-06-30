@@ -1,9 +1,10 @@
 require 'time'
 
 class Time #:nodoc:
+  include Timecop::Extension::Mock
+
   class << self
     def mock_time
-      mocked_time_stack_item = Timecop.top_stack_item
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.time(self)
     end
 

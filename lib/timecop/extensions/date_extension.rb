@@ -1,6 +1,8 @@
 require 'date'
 
 class Date #:nodoc:
+  include Timecop::Extension::Mock
+
   class << self
     def mock_date
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.date(self)
@@ -55,10 +57,6 @@ class Date #:nodoc:
     alias_method :parse, :parse_with_mock_date
 
     # @!endgroup
-
-    def mocked_time_stack_item
-      Timecop.top_stack_item
-    end
 
     def closest_wday(wday)
       today = Date.today

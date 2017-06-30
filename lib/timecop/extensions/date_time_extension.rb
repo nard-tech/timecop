@@ -1,6 +1,8 @@
 require 'date'
 
 class DateTime #:nodoc:
+  include Timecop::Extension::Mock
+
   class << self
     def mock_time
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.datetime(self)
@@ -40,9 +42,5 @@ class DateTime #:nodoc:
     alias_method :parse, :parse_with_mock_date
 
     # @!endgroup
-
-    def mocked_time_stack_item
-      Timecop.top_stack_item
-    end
   end
 end

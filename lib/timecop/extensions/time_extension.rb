@@ -2,6 +2,7 @@ require 'time'
 
 class Time #:nodoc:
   include Timecop::Extension::Mock
+  include Timecop::Extension::Now
 
   class << self
     def mock_time
@@ -11,10 +12,6 @@ class Time #:nodoc:
     # @!group now
 
     alias_method :now_without_mock_time, :now
-
-    def now_with_mock_time
-      mock_time || now_without_mock_time
-    end
 
     alias_method :now, :now_with_mock_time
 

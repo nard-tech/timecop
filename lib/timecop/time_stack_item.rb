@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), 'parsers', 'time_stack_item_parser')
+
 class Timecop
   # A data class for carrying around "time movement" objects.  Makes it easy to keep track of the time
   # movements on a simple stack.
@@ -96,34 +98,7 @@ class Timecop
     end
 
     def parse_time(*args)
-      args = args.dup
-      arg = args.shift
-
-      if arg.is_a?(Time)
-        arg
-      elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
-        time_klass.at(arg.to_time.to_f).getlocal
-      elsif Object.const_defined?(:Date) && arg.is_a?(Date)
-        time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
-      elsif args.empty? && (arg.is_a?(Integer) || arg.is_a?(Float))
-        time_klass.now + arg
-      elsif arg.nil?
-        time_klass.now
-      elsif arg.is_a?(String) && Time.respond_to?(:parse)
-        time_klass.parse(arg)
-      else
-        # we'll just assume it's a list of y/m/d/h/m/s
-        year = arg
-        month, day, hour, minute, second = args
-
-        year   ||= 2000
-        month  ||= 1
-        day    ||= 1
-        hour   ||= 0
-        minute ||= 0
-        second ||= 0
-        time_klass.local(year, month, day, hour, minute, second)
-      end
+      TimeStackItemParser.call(*args)
     end
 
     def compute_travel_offset

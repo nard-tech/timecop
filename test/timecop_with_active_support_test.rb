@@ -3,7 +3,7 @@ require 'date'
 require 'bundler/setup'
 require 'active_support/all'
 
-require_relative "test_helper"
+require_relative 'test_helper'
 require 'timecop'
 
 class TestTimecopWithActiveSupport < Minitest::Test

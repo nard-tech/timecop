@@ -1,8 +1,7 @@
-require_relative "test_helper"
+require_relative 'test_helper'
 require 'timecop'
 
 class TestTimecopWithoutDate < Minitest::Test
-
   def setup
     Object.send(:remove_const, :Date) if Object.const_defined?(:Date)
     Object.send(:remove_const, :DateTime) if Object.const_defined?(:DateTime)
@@ -43,7 +42,7 @@ class TestTimecopWithoutDate < Minitest::Test
     begin
       Timecop.freeze(t) do
         assert_equal t, Time.now
-        raise "blah exception"
+        raise 'blah exception'
       end
     rescue
       assert t != Time.now
@@ -56,34 +55,34 @@ class TestTimecopWithoutDate < Minitest::Test
     now = Time.now
     Timecop.freeze(t) do
       sleep(0.25)
-      assert Time.now < now, "If we had failed to freeze, time would have proceeded, which is what appears to have happened."
+      assert Time.now < now, 'If we had failed to freeze, time would have proceeded, which is what appears to have happened.'
       new_t = Time.now
-      assert_equal t, new_t, "Failed to change move time." # 2 seconds
+      assert_equal t, new_t, 'Failed to change move time.' # 2 seconds
       assert_equal new_t, Time.now
     end
   end
 
   def test_travel_keeps_time_moving
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    now = Time.now
+    _now = Time.now
     Timecop.travel(t) do
       new_now = Time.now
-      assert_times_effectively_equal new_now, t, 1, "Looks like we failed to actually travel time" # 0.1 seconds
+      assert_times_effectively_equal new_now, t, 1, 'Looks like we failed to actually travel time' # 0.1 seconds
       sleep(0.25)
-      assert_times_effectively_not_equal new_now, Time.now, 0.24, "Looks like time is not moving"
+      assert_times_effectively_not_equal new_now, Time.now, 0.24, 'Looks like time is not moving'
     end
   end
 
   def test_recursive_travel_maintains_each_context
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.travel(2008, 10, 10, 10, 10, 10) do
-      assert((t - Time.now).abs < 50, "Failed to travel time.")
+      assert((t - Time.now).abs < 50, 'Failed to travel time.')
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(2008, 9, 9, 9, 9, 9) do
-        assert_times_effectively_equal(t2, Time.now, 1, "Failed to travel time.")
-        assert_times_effectively_not_equal(t, Time.now, 1000, "Failed to travel time.")
+        assert_times_effectively_equal(t2, Time.now, 1, 'Failed to travel time.')
+        assert_times_effectively_not_equal(t, Time.now, 1000, 'Failed to travel time.')
       end
-      assert_times_effectively_equal(t, Time.now, 2, "Failed to restore previously-traveled time.")
+      assert_times_effectively_equal(t, Time.now, 2, 'Failed to restore previously-traveled time.')
     end
     assert_nil Time.send(:mock_time)
   end
@@ -91,12 +90,12 @@ class TestTimecopWithoutDate < Minitest::Test
   def test_recursive_travel_then_freeze
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.travel(2008, 10, 10, 10, 10, 10) do
-      assert((t - Time.now).abs < 50, "Failed to travel time.")
+      assert((t - Time.now).abs < 50, 'Failed to travel time.')
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.freeze(2008, 9, 9, 9, 9, 9) do
         assert_equal t2, Time.now
       end
-      assert_times_effectively_equal(t, Time.now, 2, "Failed to restore previously-traveled time.")
+      assert_times_effectively_equal(t, Time.now, 2, 'Failed to restore previously-traveled time.')
     end
     assert_nil Time.send(:mock_time)
   end
@@ -107,12 +106,11 @@ class TestTimecopWithoutDate < Minitest::Test
       assert_equal t, Time.now
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(t2) do
-        assert_times_effectively_equal(t2, Time.now, 1, "Failed to travel time.")
-        assert_times_effectively_not_equal(t, Time.now, 1000, "Failed to travel time.")
+        assert_times_effectively_equal(t2, Time.now, 1, 'Failed to travel time.')
+        assert_times_effectively_not_equal(t, Time.now, 1000, 'Failed to travel time.')
       end
       assert_equal t, Time.now
     end
     assert_nil Time.send(:mock_time)
   end
-
 end

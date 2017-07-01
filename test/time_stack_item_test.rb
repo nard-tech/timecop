@@ -1,5 +1,5 @@
 require 'date'
-require_relative "test_helper"
+require_relative 'test_helper'
 require 'timecop'
 
 require 'active_support/all'
@@ -51,7 +51,7 @@ class TestTimeStackItem < Minitest::Test
 
   def test_new_with_datetime_in_different_timezone
     each_timezone do
-      t = DateTime.parse("2009-10-11 00:38:00 +0200")
+      t = DateTime.parse('2009-10-11 00:38:00 +0200')
       stack_item = Timecop::TimeStackItem.new(:freeze, t)
 
       assert_date_times_equal(t, stack_item.datetime)
@@ -113,10 +113,10 @@ class TestTimeStackItem < Minitest::Test
   end
 
   def test_utc_offset_to_rational
-    assert_equal Rational(-1, 6),  a_time_stack_item.send(:utc_offset_to_rational, -14400)
-    assert_equal Rational(-5, 24), a_time_stack_item.send(:utc_offset_to_rational, -18000)
-    assert_equal Rational(0, 1),   a_time_stack_item.send(:utc_offset_to_rational, 0)
-    assert_equal Rational(1, 24),  a_time_stack_item.send(:utc_offset_to_rational, 3600)
+    assert_equal Rational(-1,  6), a_time_stack_item.send(:utc_offset_to_rational, -14_400)
+    assert_equal Rational(-5, 24), a_time_stack_item.send(:utc_offset_to_rational, -18_000)
+    assert_equal Rational( 0,  1), a_time_stack_item.send(:utc_offset_to_rational, 0)
+    assert_equal Rational( 1, 24), a_time_stack_item.send(:utc_offset_to_rational, 3600)
   end
 
   def test_datetime_in_presence_of_activesupport_timezone
@@ -134,8 +134,8 @@ class TestTimeStackItem < Minitest::Test
 
   # Ensure DateTimes handle changing DST properly
   def test_datetime_for_dst_to_non_dst
-    Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0500"))
-    t = DateTime.parse("2009-10-11 00:00:00 -0400")
+    Timecop.freeze(DateTime.parse('2009-12-1 00:38:00 -0500'))
+    t = DateTime.parse('2009-10-11 00:00:00 -0400')
     tsi = Timecop::TimeStackItem.new(:freeze, t)
 
     assert_date_times_equal t, tsi.datetime
@@ -143,18 +143,18 @@ class TestTimeStackItem < Minitest::Test
 
   # Ensure DateTimes handle changing DST properly when changing from DateTime to Time
   def test_datetime_for_dst_to_time_for_non_dst
-    Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0500"))
-    t = DateTime.parse("2009-10-11 00:00:00 -0400")
+    Timecop.freeze(DateTime.parse('2009-12-1 00:38:00 -0500'))
+    t = DateTime.parse('2009-10-11 00:00:00 -0400')
     tsi = Timecop::TimeStackItem.new(:freeze, t)
 
     assert_date_times_equal t.to_time, tsi.time
   end
 
   def test_datetime_for_non_dst_to_dst
-    Timecop.freeze(DateTime.parse("2009-10-11 00:00:00 -0400"))
-    t = DateTime.parse("2009-11-30 23:38:00 -0500")
+    Timecop.freeze(DateTime.parse('2009-10-11 00:00:00 -0400'))
+    t = DateTime.parse('2009-11-30 23:38:00 -0500')
     tsi = Timecop::TimeStackItem.new(:freeze, t)
-    return if !tsi.time.dst?
+    return unless tsi.time.dst?
 
     assert_date_times_equal t, tsi.datetime
     assert_equal Date.new(2009, 12, 1), tsi.date
@@ -166,7 +166,10 @@ class TestTimeStackItem < Minitest::Test
     expected_offset = t - t_now
     tsi = Timecop::TimeStackItem.new(:travel, t)
 
-    assert_times_effectively_equal expected_offset, tsi.send(:travel_offset), 1, "Offset not calculated correctly"
+    assert_times_effectively_equal expected_offset,
+                                   tsi.send(:travel_offset),
+                                   1,
+                                   'Offset not calculated correctly'
   end
 
   def test_set_travel_offset_for_freeze
@@ -178,16 +181,16 @@ class TestTimeStackItem < Minitest::Test
   end
 
   def test_timezones
-    Time.zone = "Europe/Zurich"
-    time = Time.zone.parse("2012-12-27T12:12:12+08:00")
+    Time.zone = 'Europe/Zurich'
+    time = Time.zone.parse('2012-12-27T12:12:12+08:00')
     Timecop.freeze(time) do |frozen_time|
       assert_equal time, frozen_time
     end
   end
 
   def test_timezones_with_parsed_string
-    Time.zone = "Europe/Zurich"
-    time_string = "2012-12-27 12:12"
+    Time.zone = 'Europe/Zurich'
+    time_string = '2012-12-27 12:12'
     expected_time = Time.zone.parse(time_string)
     Timecop.freeze(time_string) do |frozen_time|
       assert_equal expected_time, frozen_time
@@ -195,8 +198,8 @@ class TestTimeStackItem < Minitest::Test
   end
 
   def test_timezones_apply_dates
-    Time.zone = "Central Time (US & Canada)"
-    time = Time.zone.local(2013,1,3)
+    Time.zone = 'Central Time (US & Canada)'
+    time = Time.zone.local(2013, 1, 3)
 
     Timecop.freeze(time) do
       assert_equal time.to_date, Time.now.to_date
@@ -209,13 +212,16 @@ class TestTimeStackItem < Minitest::Test
     expected_offset = t - t_now
     tsi = Timecop::TimeStackItem.new(:scale, 4, t)
 
-    assert_times_effectively_equal expected_offset, tsi.send(:travel_offset), 1, "Offset not calculated correctly"
-    assert_equal tsi.send(:scaling_factor), 4, "Scaling factor not set"
+    assert_times_effectively_equal( expected_offset,
+                                    tsi.send(:travel_offset),
+                                    1,
+                                    'Offset not calculated correctly' )
+    assert_equal tsi.send(:scaling_factor), 4, 'Scaling factor not set'
   end
 
   def test_parse_only_string_with_active_support
     Time.expects(:parse).never
-    Timecop.freeze(2011, 01, 02, hour=0, minute=0, second=0)
+    Timecop.freeze(2011, 1, 2, hour = 0, minute = 0, second = 0)
   end
 
   def test_parse_date
@@ -231,20 +237,20 @@ class TestTimeStackItem < Minitest::Test
     time = Time.now
     Timecop.freeze time
     assert_equal time, Time.now
-    assert_equal time.nsec, Time.now.nsec if (Time.now.respond_to?(:nsec))
+    assert_equal time.nsec, Time.now.nsec if Time.now.respond_to?(:nsec)
   end
 
   def test_time_with_different_timezone_keeps_nsec
-    Time.zone = "Tokyo"
+    Time.zone = 'Tokyo'
     t = Time.now
     Timecop.freeze(t) do
       assert_equal t, Time.now
-      assert_equal t.nsec, Time.now.nsec if (Time.now.respond_to?(:nsec))
+      assert_equal t.nsec, Time.now.nsec if Time.now.respond_to?(:nsec)
     end
   end
 
   def test_time_now_always_returns_local_time
-    Time.zone = "Tokyo"
+    Time.zone = 'Tokyo'
     t = Time.utc(2000, 1, 1)
     Timecop.freeze(t) do
       assert_equal t.getlocal.zone, Time.now.zone
@@ -252,7 +258,7 @@ class TestTimeStackItem < Minitest::Test
   end
 
   def test_time_zone_now_returns_time_in_that_zone
-    Time.zone = "Hawaii"
+    Time.zone = 'Hawaii'
     t = Time.utc(2000, 1, 1)
     Timecop.freeze(t) do
       assert_equal t, Time.zone.now
@@ -261,7 +267,7 @@ class TestTimeStackItem < Minitest::Test
   end
 
   def test_freezing_a_time_leaves_timezone_intact
-    Time.zone = "Tokyo"
+    Time.zone = 'Tokyo'
     t = Time.now
     t_dup = t.dup
     Timecop.freeze(t) {}
@@ -269,8 +275,9 @@ class TestTimeStackItem < Minitest::Test
   end
 
   def test_freezing_a_time_with_zone_returns_proper_zones
-    Time.zone = "Hawaii"
-    t = ActiveSupport::TimeWithZone.new(Time.utc(2000, 1, 1), ActiveSupport::TimeZone['Tokyo'])
+    Time.zone = 'Hawaii'
+    t = ActiveSupport::TimeWithZone.new( Time.utc(2000, 1, 1),
+                                         ActiveSupport::TimeZone['Tokyo'] )
     Timecop.freeze(t) do
       local_now = Time.now
       assert_equal t, local_now
@@ -283,7 +290,7 @@ class TestTimeStackItem < Minitest::Test
   end
 
   def test_datetime_timezones
-    dt = DateTime.new(2011,1,3,15,25,0,"-6")
+    dt = DateTime.new(2011, 1, 3, 15, 25, 0, '-6')
     Timecop.freeze(dt) do
       now = DateTime.now
       assert_equal dt, now, "#{dt.to_f}, #{now.to_f}"

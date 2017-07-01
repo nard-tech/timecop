@@ -8,6 +8,7 @@ require 'mocha/setup'
 
 class Minitest::Test
   private
+
     # Tests to see that two times are within the given distance,
     # in seconds, from each other.
     def times_effectively_equal(time1, time2, seconds_interval = 1)
@@ -15,11 +16,13 @@ class Minitest::Test
     end
 
     def assert_times_effectively_equal(time1, time2, seconds_interval = 1, msg = nil)
-      assert times_effectively_equal(time1, time2, seconds_interval), "#{msg}: time1 = #{time1.to_s}, time2 = #{time2.to_s}"
+      assert times_effectively_equal(time1, time2, seconds_interval),
+             "#{msg}: time1 = #{time1}, time2 = #{time2}"
     end
 
     def assert_times_effectively_not_equal(time1, time2, seconds_interval = 1, msg = nil)
-      assert !times_effectively_equal(time1, time2, seconds_interval), "#{msg}: time1 = #{time1.to_s}, time2 = #{time2.to_s}"
+      assert !times_effectively_equal(time1, time2, seconds_interval),
+             "#{msg}: time1 = #{time1}, time2 = #{time2}"
     end
 
     # Gets the local offset (supplied by ENV['TZ'] or your computer's clock)
@@ -28,18 +31,18 @@ class Minitest::Test
       Time.at(time.to_i).to_datetime.offset
     end
 
-    TIMEZONES = ["Europe/Paris", "UTC", "America/Chicago"]
+    TIMEZONES = ['Europe/Paris', 'UTC', 'America/Chicago'].freeze
 
     def each_timezone
-      old_tz = ENV["TZ"]
+      old_tz = ENV['TZ']
 
       begin
         TIMEZONES.each do |timezone|
-          ENV["TZ"] = timezone
+          ENV['TZ'] = timezone
           yield
         end
       ensure
-        ENV["TZ"] = old_tz
+        ENV['TZ'] = old_tz
       end
     end
 
@@ -48,11 +51,13 @@ class Minitest::Test
     end
 
     def assert_date_times_equal(dt1, dt2)
-      assert_in_delta dt1.to_time.to_f, dt2.to_time.to_f, 0.01, "Failed for timezone: #{ENV['TZ']}: #{dt1.to_s} not equal to #{dt2.to_s}"
+      assert_in_delta dt1.to_time.to_f,
+                      dt2.to_time.to_f,
+                      0.01,
+                      "Failed for timezone: #{ENV['TZ']}: #{dt1} not equal to #{dt2}"
     end
 
     def jruby?
-      RUBY_PLATFORM == "java"
+      RUBY_PLATFORM == 'java'
     end
-
 end

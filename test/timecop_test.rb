@@ -1,4 +1,4 @@
-require_relative "test_helper"
+require_relative 'test_helper'
 require 'timecop'
 
 class TestTimecop < Minitest::Test
@@ -7,10 +7,10 @@ class TestTimecop < Minitest::Test
   end
 
   def test_freeze_changes_and_resets_time
-    outer_freeze_time = Time.local(2001, 01, 01)
-    inner_freeze_block = Time.local(2002, 02, 02)
-    inner_freeze_one = Time.local(2003, 03, 03)
-    inner_freeze_two = Time.local(2004, 04, 04)
+    outer_freeze_time = Time.local(2001, 1, 1)
+    inner_freeze_block = Time.local(2002, 2, 2)
+    inner_freeze_one = Time.local(2003, 3, 3)
+    inner_freeze_two = Time.local(2004, 4, 4)
 
     Timecop.freeze(outer_freeze_time) do
       assert_times_effectively_equal outer_freeze_time, Time.now
@@ -44,14 +44,18 @@ class TestTimecop < Minitest::Test
   end
 
   def test_freeze_with_block_unsets_mock_time
-    assert_nil Time.send(:mock_time), "test is invalid"
-    Timecop.freeze(1) do; end
+    assert_nil Time.send(:mock_time), 'test is invalid'
+    Timecop.freeze(1) do
+      # do nothing
+    end
     assert_nil Time.send(:mock_time)
   end
 
   def test_travel_with_block_unsets_mock_time
-    assert_nil Time.send(:mock_time), "test is invalid"
-    Timecop.travel(1) do; end
+    assert_nil Time.send(:mock_time), 'test is invalid'
+    Timecop.travel(1) do
+      # do nothing
+    end
     assert_nil Time.send(:mock_time)
   end
 
@@ -67,9 +71,11 @@ class TestTimecop < Minitest::Test
   end
 
   def test_freeze_in_time_subclass_returns_mocked_subclass
-    t = Time.local(2008, 10, 10, 10, 10, 10)
+    _t = Time.local(2008, 10, 10, 10, 10, 10)
     custom_timeklass = Class.new(Time) do
-      def custom_format_method() strftime('%F') end
+      def custom_format_method
+        strftime('%F')
+      end
     end
 
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
@@ -80,9 +86,11 @@ class TestTimecop < Minitest::Test
   end
 
   def test_freeze_in_date_subclass_returns_mocked_subclass
-    t = Time.local(2008, 10, 10, 10, 10, 10)
+    _t = Time.local(2008, 10, 10, 10, 10, 10)
     custom_dateklass = Class.new(Date) do
-      def custom_format_method() strftime('%F') end
+      def custom_format_method
+        strftime('%F')
+      end
     end
 
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
@@ -93,9 +101,11 @@ class TestTimecop < Minitest::Test
   end
 
   def test_freeze_in_datetime_subclass_returns_mocked_subclass
-    t = Time.local(2008, 10, 10, 10, 10, 10)
+    _t = Time.local(2008, 10, 10, 10, 10, 10)
     custom_datetimeklass = Class.new(DateTime) do
-      def custom_format_method() strftime('%F') end
+      def custom_format_method
+        strftime('%F')
+      end
     end
 
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
@@ -136,7 +146,7 @@ class TestTimecop < Minitest::Test
       # Start from a time that is subject to DST
       Timecop.freeze(2009, 9, 1)
       # Travel to a DateTime that is also in DST
-      t = DateTime.parse("2009-10-11 00:38:00 +0200")
+      t = DateTime.parse('2009-10-11 00:38:00 +0200')
       Timecop.freeze(t) do
         assert_date_times_equal t, DateTime.now
       end
@@ -149,7 +159,7 @@ class TestTimecop < Minitest::Test
       # Start from a time that is not subject to DST
       Timecop.freeze(2009, 12, 1)
       # Travel to a time that is also not in DST
-      t = DateTime.parse("2009-12-11 00:38:00 +0100")
+      t = DateTime.parse('2009-12-11 00:38:00 +0100')
       Timecop.freeze(t) do
         assert_date_times_equal t, DateTime.now
       end
@@ -159,9 +169,9 @@ class TestTimecop < Minitest::Test
   def test_freeze_with_datetime_from_a_non_dst_time_to_a_dst_time
     each_timezone do
       # Start from a time that is not subject to DST
-      Timecop.freeze(DateTime.parse("2009-12-1 00:00:00 +0100"))
+      Timecop.freeze(DateTime.parse('2009-12-1 00:00:00 +0100'))
       # Travel back to a time in DST
-      t = DateTime.parse("2009-10-11 00:38:00 +0200")
+      t = DateTime.parse('2009-10-11 00:38:00 +0200')
       Timecop.freeze(t) do
         assert_date_times_equal t, DateTime.now
       end
@@ -171,9 +181,9 @@ class TestTimecop < Minitest::Test
   def test_freeze_with_datetime_from_a_dst_time_to_a_non_dst_time
     each_timezone do
       # Start from a time that is not subject to DST
-      Timecop.freeze(DateTime.parse("2009-10-11 00:00:00 +0200"))
+      Timecop.freeze(DateTime.parse('2009-10-11 00:00:00 +0200'))
       # Travel back to a time in DST
-      t = DateTime.parse("2009-12-1 00:38:00 +0100")
+      t = DateTime.parse('2009-12-1 00:38:00 +0100')
       Timecop.freeze(t) do
         assert_date_times_equal t, DateTime.now
       end
@@ -214,7 +224,7 @@ class TestTimecop < Minitest::Test
     begin
       Timecop.freeze(t) do
         assert_equal t, Time.now
-        raise "blah exception"
+        raise 'blah exception'
       end
     rescue
       assert t != Time.now
@@ -225,19 +235,25 @@ class TestTimecop < Minitest::Test
   def test_exception_thrown_in_return_block_restores_previous_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(t) do
-      Timecop.return { raise 'foobar' } rescue nil
+      begin
+        Timecop.return { raise 'foobar' }
+      rescue
+        nil
+      end
       assert_equal t, Time.now
     end
   end
 
   def test_freeze_freezes_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    now = Time.now
+    _now = Time.now
     Timecop.freeze(t) do
-      #assert Time.now < now, "If we had failed to freeze, time would have proceeded, which is what appears to have happened."
-      new_t, new_d, new_dt = Time.now, Date.today, DateTime.now
-      assert_equal t, new_t, "Failed to freeze time." # 2 seconds
-      #sleep(10)
+      # assert Time.now < now, "If we had failed to freeze, time would have proceeded, which is what appears to have happened."
+      new_t = Time.now
+      new_d = Date.today
+      new_dt = DateTime.now
+      assert_equal t, new_t, 'Failed to freeze time.' # 2 seconds
+      # sleep(10)
       assert_equal new_t, Time.now
       assert_equal new_d, Date.today
       assert_equal new_dt, DateTime.now
@@ -246,18 +262,18 @@ class TestTimecop < Minitest::Test
 
   def test_travel_keeps_time_moving
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    now = Time.now
+    _now = Time.now
     Timecop.travel(t) do
       new_now = Time.now
-      assert_times_effectively_equal(new_now, t, 1, "Looks like we failed to actually travel time")
+      assert_times_effectively_equal(new_now, t, 1, 'Looks like we failed to actually travel time')
       sleep(0.25)
-      assert_times_effectively_not_equal new_now, Time.now, 0.24, "Looks like time is not moving"
+      assert_times_effectively_not_equal new_now, Time.now, 0.24, 'Looks like time is not moving'
     end
   end
 
   def test_mocked_date_time_now_is_local
     each_timezone do
-      t = DateTime.parse("2009-10-11 00:38:00 +0200")
+      t = DateTime.parse('2009-10-11 00:38:00 +0200')
       Timecop.freeze(t) do
         if ENV['TZ'] == 'UTC'
           assert_equal(local_offset, 0, "Local offset not be zero for #{ENV['TZ']}")
@@ -273,9 +289,9 @@ class TestTimecop < Minitest::Test
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.scale(4, t) do
       start = Time.now
-      assert_times_effectively_equal start, t, 1, "Looks like we failed to actually travel time"
+      assert_times_effectively_equal start, t, 1, 'Looks like we failed to actually travel time'
       sleep(0.25)
-      assert_times_effectively_equal Time.at((start + 4*0.25).to_f), Time.now, 0.25, "Looks like time is not moving at 4x"
+      assert_times_effectively_equal Time.at((start + 4 * 0.25).to_f), Time.now, 0.25, 'Looks like time is not moving at 4x'
     end
   end
 
@@ -313,25 +329,25 @@ class TestTimecop < Minitest::Test
 
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(t) do
-      assert !Time.now.utc?, "Time#local failed to return a time in the local time zone."
+      assert !Time.now.utc?, 'Time#local failed to return a time in the local time zone.'
 
       # #utc, #gmt, and #localtime are destructive methods.
       Time.now.utc
 
-      assert !Time.now.utc?, "Failed to thwart destructive methods."
+      assert !Time.now.utc?, 'Failed to thwart destructive methods.'
     end
   end
 
   def test_recursive_travel_maintains_each_context
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.travel(2008, 10, 10, 10, 10, 10) do
-      assert((t - Time.now).abs < 50, "Failed to travel time.")
+      assert((t - Time.now).abs < 50, 'Failed to travel time.')
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(2008, 9, 9, 9, 9, 9) do
-        assert_times_effectively_equal(t2, Time.now, 1, "Failed to travel time.")
-        assert_times_effectively_not_equal(t, Time.now, 1000, "Failed to travel time.")
+        assert_times_effectively_equal(t2, Time.now, 1, 'Failed to travel time.')
+        assert_times_effectively_not_equal(t, Time.now, 1000, 'Failed to travel time.')
       end
-      assert_times_effectively_equal(t, Time.now, 2, "Failed to restore previously-traveled time.")
+      assert_times_effectively_equal(t, Time.now, 2, 'Failed to restore previously-traveled time.')
     end
     assert_nil Time.send(:mock_time)
   end
@@ -339,7 +355,7 @@ class TestTimecop < Minitest::Test
   def test_recursive_travel_yields_correct_time
     Timecop.travel(2008, 10, 10, 10, 10, 10) do
       Timecop.travel(2008, 9, 9, 9, 9, 9) do |inner_freeze|
-        assert_times_effectively_equal inner_freeze, Time.now, 1, "Failed to yield current time back to block"
+        assert_times_effectively_equal inner_freeze, Time.now, 1, 'Failed to yield current time back to block'
       end
     end
   end
@@ -347,12 +363,12 @@ class TestTimecop < Minitest::Test
   def test_recursive_travel_then_freeze
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.travel(2008, 10, 10, 10, 10, 10) do
-      assert((t - Time.now).abs < 50, "Failed to travel time.")
+      assert((t - Time.now).abs < 50, 'Failed to travel time.')
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.freeze(2008, 9, 9, 9, 9, 9) do
         assert_equal t2, Time.now
       end
-      assert_times_effectively_equal(t, Time.now, 2, "Failed to restore previously-traveled time.")
+      assert_times_effectively_equal(t, Time.now, 2, 'Failed to restore previously-traveled time.')
     end
     assert_nil Time.send(:mock_time)
   end
@@ -363,8 +379,8 @@ class TestTimecop < Minitest::Test
       assert_equal t, Time.now
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(t2) do
-        assert_times_effectively_equal(t2, Time.now, 1, "Failed to travel time.")
-        assert_times_effectively_not_equal(t, Time.now, 1000, "Failed to travel time.")
+        assert_times_effectively_equal(t2, Time.now, 1, 'Failed to travel time.')
+        assert_times_effectively_not_equal(t, Time.now, 1000, 'Failed to travel time.')
       end
       assert_equal t, Time.now
     end
@@ -443,7 +459,7 @@ class TestTimecop < Minitest::Test
     Timecop.travel Time.now - 60
     time_now = Timecop.return_to_baseline
     assert times_effectively_equal(baseline, time_now),
-      "expected to return to #{baseline}, but returned to #{time_now}"
+           "expected to return to #{baseline}, but returned to #{time_now}"
   end
 
   def test_return_eliminates_baseline
@@ -458,7 +474,7 @@ class TestTimecop < Minitest::Test
   end
 
   def test_mock_time_new_same_as_now
-    date = Time.local(2011, 01, 02)
+    date = Time.local(2011, 1, 2)
     Timecop.freeze date
     assert_equal date, Time.now
     assert_equal date, Time.new
@@ -472,17 +488,15 @@ class TestTimecop < Minitest::Test
 
   def test_datetime_to_time_for_dst_to_non_dst
     # Start at a time subject to DST
-    Timecop.travel(2009, 4, 1, 0, 0, 0, -4*60*60) do
-
+    Timecop.travel(2009, 4, 1, 0, 0, 0, -4 * 60 * 60) do
       # Then freeze, via DateTime, at a time not subject to DST
-      t = DateTime.new(2009,01,01,0,0,0, "-0500")
+      t = DateTime.new(2009, 1, 1, 0, 0, 0, '-0500')
       Timecop.freeze(t) do
-
         # Check the current time via DateTime.now--should be what we asked for
         assert_date_times_equal t, DateTime.now
 
         # Then check the current time via Time.now (not DateTime.now)
-        assert_times_effectively_equal Time.new(2009, 1, 1, 0, 0, 0, -5*60*60), Time.now
+        assert_times_effectively_equal Time.new(2009, 1, 1, 0, 0, 0, -5 * 60 * 60), Time.now
       end
     end
   end
@@ -528,13 +542,13 @@ class TestTimecop < Minitest::Test
   end
 
   def test_date_strptime_without_year
-    Timecop.freeze(Time.new(1984,2,28)) do
+    Timecop.freeze(Time.new(1984, 2, 28)) do
       assert_equal Date.strptime('04-14', '%m-%d'), Date.new(1984, 4, 14)
     end
   end
 
   def test_date_strptime_without_specifying_format
-    Timecop.freeze(Time.new(1984,2,28)) do
+    Timecop.freeze(Time.new(1984, 2, 28)) do
       assert_equal Date.strptime('1999-04-14'), Date.new(1999, 4, 14)
     end
   end
@@ -558,10 +572,10 @@ class TestTimecop < Minitest::Test
 
   def test_thread_safe_timecop
     Timecop.thread_safe = true
-    date = Time.local(2011, 01, 02)
+    date = Time.local(2011, 1, 2)
     thread = Thread.new do
       Timecop.freeze(date) do
-        sleep 1 #give main thread time to run
+        sleep 1 # give main thread time to run
         assert_equal date, Time.now
       end
     end
@@ -575,7 +589,7 @@ class TestTimecop < Minitest::Test
 
   private
 
-  def with_safe_mode(enabled=true)
+  def with_safe_mode(enabled = true)
     mode = Timecop.safe_mode?
     Timecop.safe_mode = enabled
     yield

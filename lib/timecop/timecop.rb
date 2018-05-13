@@ -14,6 +14,8 @@ class Timecop
   include Singleton
 
   class << self
+    attr_writer :safe_mode
+
     # Allows you to run a block of code and "fake" a time throughout the execution of that block.
     # This is particularly useful for writing test methods where the passage of time is critical to the business
     # logic being tested.  For example:
@@ -103,10 +105,6 @@ class Timecop
       instance.send(:stack).last
     end
 
-    def safe_mode=(safe)
-      @safe_mode = safe
-    end
-
     def safe_mode?
       @safe_mode ||= false
     end
@@ -139,6 +137,8 @@ class Timecop
   end
 
   private
+
+  attr_reader :thread_safe
 
   def baseline=(b)
     set_baseline(b)
@@ -181,10 +181,6 @@ class Timecop
   def thread_safe=(t)
     initialize
     @thread_safe = t
-  end
-
-  def thread_safe
-    @thread_safe
   end
 
   def travel(mock_type, *args, &_block) #:nodoc:

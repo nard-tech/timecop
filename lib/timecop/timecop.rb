@@ -109,8 +109,8 @@ class Timecop
       @safe_mode ||= false
     end
 
-    def thread_safe=(t)
-      instance.send(:thread_safe=, t)
+    def thread_safe=(thread)
+      instance.send(:thread_safe=, thread)
     end
 
     def thread_safe
@@ -170,17 +170,17 @@ class Timecop
     end
   end
 
-  def set_stack(s)
+  def set_stack(stack)
     if @thread_safe
-      Thread.current[:timecop_stack] = s
+      Thread.current[:timecop_stack] = stack
     else
-      @stack = s
+      @stack = stack
     end
   end
 
-  def thread_safe=(t)
+  def thread_safe=(thread)
     initialize
-    @thread_safe = t
+    @thread_safe = thread
   end
 
   def travel(mock_type, *args, &_block) #:nodoc:

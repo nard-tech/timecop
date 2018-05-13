@@ -11,19 +11,19 @@ class Time #:nodoc:
 
     # @!group now
 
-    alias_method :now_without_mock_time, :now
+    alias now_without_mock_time now
 
-    alias_method :now, :now_with_mock_time
+    alias now now_with_mock_time
 
     # @!group new
 
-    alias_method :new_without_mock_time, :new
+    alias new_without_mock_time new
 
     def new_with_mock_time(*args)
       args.size <= 0 ? now : new_without_mock_time(*args)
     end
 
-    alias_method :new, :new_with_mock_time
+    alias new new_with_mock_time
 
     # @!endgroup
   end

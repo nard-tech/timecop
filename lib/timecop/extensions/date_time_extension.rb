@@ -13,13 +13,13 @@ class DateTime #:nodoc:
 
     # @!group now
 
-    alias_method :now_without_mock_time, :now
+    alias now_without_mock_time now
 
-    alias_method :now, :now_with_mock_time
+    alias now now_with_mock_time
 
     # @!group parse
 
-    alias_method :parse_without_mock_date, :parse
+    alias parse_without_mock_date parse
 
     def parse_with_mock_date(*args)
       parsed_date = parse_without_mock_date(*args)
@@ -30,7 +30,7 @@ class DateTime #:nodoc:
       end
     end
 
-    alias_method :parse, :parse_with_mock_date
+    alias parse parse_with_mock_date
 
     # @!endgroup
 

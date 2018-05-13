@@ -12,17 +12,17 @@ class Date #:nodoc:
 
     # @!group today
 
-    alias_method :today_without_mock_date, :today
+    alias today_without_mock_date today
 
     def today_with_mock_date
       mock_date || today_without_mock_date
     end
 
-    alias_method :today, :today_with_mock_date
+    alias today today_with_mock_date
 
     # @!group strptime
 
-    alias_method :strptime_without_mock_date, :strptime
+    alias strptime_without_mock_date strptime
 
     def strptime_with_mock_date(str = '-4712-01-01', fmt = '%F', start = Date::ITALY)
       unless start == Date::ITALY
@@ -33,11 +33,11 @@ class Date #:nodoc:
       Time.strptime(str, fmt).to_date
     end
 
-    alias_method :strptime, :strptime_with_mock_date
+    alias strptime strptime_with_mock_date
 
     # @!group parse
 
-    alias_method :parse_without_mock_date, :parse
+    alias parse_without_mock_date parse
 
     def parse_with_mock_date(*args)
       parsed_date = parse_without_mock_date(*args)
@@ -48,7 +48,7 @@ class Date #:nodoc:
       end
     end
 
-    alias_method :parse, :parse_with_mock_date
+    alias parse parse_with_mock_date
 
     # @!endgroup
 

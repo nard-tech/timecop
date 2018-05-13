@@ -2,8 +2,6 @@ class Timecop
   # A data class for carrying around "time movement" objects.  Makes it easy to keep track of the time
   # movements on a simple stack.
   class TimeStackItem #:nodoc:
-    attr_reader :mock_type
-
     MOCK_TYPES = %i[freeze travel scale].freeze
 
     def initialize(mock_type, *args)
@@ -15,6 +13,9 @@ class Timecop
       @time_was       = Time.now_without_mock_time
       @travel_offset  = compute_travel_offset
     end
+
+    attr_reader :scaling_factor
+    attr_reader :mock_type
 
     def year
       time.year
@@ -50,10 +51,6 @@ class Timecop
 
     def travel_offset_days
       (@travel_offset / 60 / 60 / 24).round
-    end
-
-    def scaling_factor
-      @scaling_factor
     end
 
     def time(time_klass = Time) #:nodoc:

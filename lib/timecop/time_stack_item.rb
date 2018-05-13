@@ -89,10 +89,6 @@ class Timecop
 
     private
 
-    def rational_to_utc_offset(rational)
-      ((24.0 / rational.denominator) * rational.numerator) * (60 * 60)
-    end
-
     def utc_offset_to_rational(utc_offset)
       Rational(utc_offset, 24 * 60 * 60)
     end

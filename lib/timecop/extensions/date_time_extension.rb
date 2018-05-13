@@ -1,4 +1,5 @@
 require 'date'
+require File.join(File.dirname(__FILE__), '..', 'parsers', 'date_time_parser')
 
 class DateTime #:nodoc:
   include Timecop::Extension::Mock
@@ -21,23 +22,21 @@ class DateTime #:nodoc:
 
     def parse_with_mock_date(*args)
       parsed_date = parse_without_mock_date(*args)
-      return parsed_date unless mocked_time_stack_item
-
-      date_hash = DateTime._parse(*args)
-
-      if date_hash[:year] && date_hash[:mon]
-        parsed_date
-      elsif date_hash[:mon] && date_hash[:mday]
-        DateTime.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
-      elsif date_hash[:wday]
-        Date.closest_wday(date_hash[:wday]).to_datetime
+      if mocked_time_stack_item
+        parser_class.call(parsed_date, mocked_time_stack_item, *args)
       else
-        parsed_date + mocked_time_stack_item.travel_offset_days
+        parsed_date
       end
     end
 
     alias_method :parse, :parse_with_mock_date
 
     # @!endgroup
+
+    private
+
+    def parser_class
+      Timecop::DateTimeParser
+    end
   end
 end

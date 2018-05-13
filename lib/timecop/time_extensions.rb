@@ -44,8 +44,8 @@ class Date #:nodoc:
 
     def strptime_with_mock_date(str = '-4712-01-01', fmt = '%F', start = Date::ITALY)
       unless start == Date::ITALY
-        raise ArgumentError, "Timecop's #{self}::#{__method__} only " +
-          "supports Date::ITALY for the start argument."
+        raise ArgumentError, "Timecop's #{self}::#{__method__} only " \
+          'supports Date::ITALY for the start argument.'
       end
 
       Time.strptime(str, fmt).to_date
@@ -56,6 +56,7 @@ class Date #:nodoc:
     def parse_with_mock_date(*args)
       parsed_date = parse_without_mock_date(*args)
       return parsed_date unless mocked_time_stack_item
+
       date_hash = Date._parse(*args)
 
       if date_hash[:year] && date_hash[:mon]
@@ -102,6 +103,7 @@ class DateTime #:nodoc:
     def parse_with_mock_date(*args)
       parsed_date = parse_without_mock_date(*args)
       return parsed_date unless mocked_time_stack_item
+
       date_hash = DateTime._parse(*args)
 
       if date_hash[:year] && date_hash[:mon]

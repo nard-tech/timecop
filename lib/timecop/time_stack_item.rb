@@ -55,11 +55,11 @@ class Timecop
     end
 
     def time(time_klass = Time) #:nodoc:
-      if @time.respond_to?(:in_time_zone)
-        time = time_klass.at(@time.dup.localtime)
-      else
-        time = time_klass.at(@time)
-      end
+      time = if @time.respond_to?(:in_time_zone)
+               time_klass.at(@time.dup.localtime)
+             else
+               time_klass.at(@time)
+             end
 
       if travel_offset.nil?
         time
@@ -101,23 +101,21 @@ class Timecop
         time_klass.at(arg.to_time.to_f).getlocal
       elsif Object.const_defined?(:Date) && arg.is_a?(Date)
         time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
-      elsif args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
+      elsif args.empty? && (arg.is_a?(Integer) || arg.is_a?(Float))
         time_klass.now + arg
       elsif arg.nil?
         time_klass.now
+      elsif arg.is_a?(String) && Time.respond_to?(:parse)
+        time_klass.parse(arg)
       else
-        if arg.is_a?(String) && Time.respond_to?(:parse)
-          time_klass.parse(arg)
-        else
-          # we'll just assume it's a list of y/m/d/h/m/s
-          year   = arg        || 2000
-          month  = args.shift || 1
-          day    = args.shift || 1
-          hour   = args.shift || 0
-          minute = args.shift || 0
-          second = args.shift || 0
-          time_klass.local(year, month, day, hour, minute, second)
-        end
+        # we'll just assume it's a list of y/m/d/h/m/s
+        year   = arg        || 2000
+        month  = args.shift || 1
+        day    = args.shift || 1
+        hour   = args.shift || 0
+        minute = args.shift || 0
+        second = args.shift || 0
+        time_klass.local(year, month, day, hour, minute, second)
       end
     end
 
@@ -125,7 +123,7 @@ class Timecop
       time - Time.now_without_mock_time
     end
 
-    def times_are_equal_within_epsilon t1, t2, epsilon_in_seconds
+    def times_are_equal_within_epsilon(t1, t2, epsilon_in_seconds)
       (t1 - t2).abs < epsilon_in_seconds
     end
 

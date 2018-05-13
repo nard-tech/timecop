@@ -80,7 +80,8 @@ class Timecop
     end
 
     def datetime(datetime_klass = DateTime)
-      datetime_klass.new(year, month, day, hour, min, sec_normalized, utc_offset_to_rational(utc_offset))
+      datetime_klass.new(year, month, day, hour, min, sec_normalized,
+                         utc_offset_to_rational(utc_offset))
     end
 
     private

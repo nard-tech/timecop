@@ -96,7 +96,9 @@ class Timecop
     end
 
     def parse_time(*args)
+      args = args.dup
       arg = args.shift
+
       if arg.is_a?(Time)
         arg
       elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
@@ -111,12 +113,15 @@ class Timecop
         time_klass.parse(arg)
       else
         # we'll just assume it's a list of y/m/d/h/m/s
-        year   = arg        || 2000
-        month  = args.shift || 1
-        day    = args.shift || 1
-        hour   = args.shift || 0
-        minute = args.shift || 0
-        second = args.shift || 0
+        year = arg
+        month, day, hour, minute, second = args
+
+        year   ||= 2000
+        month  ||= 1
+        day    ||= 1
+        hour   ||= 0
+        minute ||= 0
+        second ||= 0
         time_klass.local(year, month, day, hour, minute, second)
       end
     end

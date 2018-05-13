@@ -1,6 +1,6 @@
 require 'singleton'
-require File.join(File.dirname(__FILE__), "time_extensions")
-require File.join(File.dirname(__FILE__), "time_stack_item")
+require File.join(File.dirname(__FILE__), 'time_extensions')
+require File.join(File.dirname(__FILE__), 'time_stack_item')
 
 # Timecop
 # * Wrapper class for manipulating the extensions to the Time, Date, and DateTime objects
@@ -125,10 +125,17 @@ class Timecop
     end
 
     private
+
     def send_travel(mock_type, *args, &block)
       val = instance.send(:travel, mock_type, *args, &block)
       block_given? ? val : Time.now
     end
+  end
+
+  def initialize #:nodoc:
+    @stack = []
+    @safe = nil
+    @thread_safe = false
   end
 
   private
@@ -171,12 +178,6 @@ class Timecop
     end
   end
 
-  def initialize #:nodoc:
-    @stack = []
-    @safe = nil
-    @thread_safe = false
-  end
-
   def thread_safe=(t)
     initialize
     @thread_safe = t
@@ -186,7 +187,7 @@ class Timecop
     @thread_safe
   end
 
-  def travel(mock_type, *args, &block) #:nodoc:
+  def travel(mock_type, *args, &_block) #:nodoc:
     raise SafeModeException if Timecop.safe_mode? && !block_given? && !@safe
 
     stack_item = TimeStackItem.new(mock_type, *args)
@@ -194,36 +195,36 @@ class Timecop
     stack_backup = stack.dup
     stack << stack_item
 
-    if block_given?
-      safe_backup = @safe
-      @safe = true
-      begin
-        yield stack_item.time
-      ensure
-        @stack.replace stack_backup
-        @safe = safe_backup
-      end
+    return unless block_given?
+
+    safe_backup = @safe
+    @safe = true
+    begin
+      yield stack_item.time
+    ensure
+      @stack.replace(stack_backup)
+      @safe = safe_backup
     end
   end
 
-  def return(&block)
+  def return(&_block)
     current_stack = stack
     current_baseline = baseline
     unmock!
     yield
   ensure
-    set_stack current_stack
-    set_baseline current_baseline
+    set_stack(current_stack)
+    set_baseline(current_baseline)
   end
 
   def unmock! #:nodoc:
-    set_baseline nil
-    set_stack []
+    set_baseline(nil)
+    set_stack([])
   end
 
   def return_to_baseline
     if baseline
-      set_stack [stack.shift]
+      set_stack([stack.shift])
     else
       unmock!
     end
@@ -231,7 +232,7 @@ class Timecop
 
   class SafeModeException < StandardError
     def initialize
-      super "Safe mode is enabled, only calls passing a block are allowed."
+      super 'Safe mode is enabled, only calls passing a block are allowed.'
     end
   end
 end

@@ -4,6 +4,7 @@ require File.join(File.dirname(__FILE__), '..', 'parsers', 'date_time_parser')
 class DateTime #:nodoc:
   include Timecop::Extension::Mock
   include Timecop::Extension::Now
+  include Timecop::Extension::DateBase
 
   class << self
     def mock_time

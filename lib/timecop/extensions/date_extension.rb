@@ -3,6 +3,7 @@ require File.join(File.dirname(__FILE__), '..', 'parsers', 'date_parser')
 
 class Date #:nodoc:
   include Timecop::Extension::Mock
+  include Timecop::Extension::DateBase
 
   class << self
     def mock_date
